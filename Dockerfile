@@ -1,15 +1,16 @@
-FROM alpine:3.12
+FROM ubuntu:latest
 
 
-LABEL maintainer="Rory McCune <rorym@mccune.org.uk>"
+LABEL maintainer="Mauricio Cano <m.a.cano.grijalba@gmail.com>"
 
+ENV DEBIAN_FRONTEND=noninteractive
 
+RUN apt update && apt upgrade -y
 
-RUN apk --update add python3 py3-pip py3-netifaces py3-prettytable py3-certifi \
-py3-chardet py3-future py3-idna py3-netaddr py3-parsing py3-six\
- openssh nmap nmap-scripts curl tcpdump bind-tools jq nmap-ncat bash util-linux && \
-sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config && rm -rf /var/cache/apk/*
-
+RUN apt install -y python3 python3-pip python3-netifaces python3-prettytable python3-certifi \
+python3-chardet python3-future python3-idna python3-netaddr python3-pyparsing python3-six\
+ openssh-server nmap curl tcpdump dnsutils ncat bash util-linux && \
+sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config 
 
 #Kubernetes 1.8 for old clusters
 RUN curl -O https://storage.googleapis.com/kubernetes-release/release/v1.8.4/bin/linux/amd64/kubectl && \
@@ -21,7 +22,37 @@ chmod +x kubectl && mv kubectl /usr/local/bin/kubectl112
 
 #Kubernetes 1.16 for newer clusters
 RUN curl -O https://storage.googleapis.com/kubernetes-release/release/v1.16.7/bin/linux/amd64/kubectl && \
+chmod +x kubectl && mv kubectl /usr/local/bin/kubectl116
+
+#Kubernetes 1.17 for newer medium old clusters
+RUN curl -LO https://dl.k8s.io/release/v1.17.17/bin/linux/amd64/kubectl && \
+chmod +x kubectl && mv kubectl /usr/local/bin/kubectl117
+
+#Kubernetes 1.18 for newer medium old clusters
+RUN curl -LO https://dl.k8s.io/release/v1.18.20/bin/linux/amd64/kubectl && \
+chmod +x kubectl && mv kubectl /usr/local/bin/kubectl118
+
+#Kubernetes 1.19 for newer medium old clusters
+RUN curl -LO https://dl.k8s.io/release/v1.19.11/bin/linux/amd64/kubectl && \
+chmod +x kubectl && mv kubectl /usr/local/bin/kubectl119
+
+#Kubernetes 1.20 for newer clusters
+RUN curl -LO https://dl.k8s.io/release/v1.20.7/bin/linux/amd64/kubectl && \
+chmod +x kubectl && mv kubectl /usr/local/bin/kubectl120
+
+#Kubernetes 1.21.2 for newest clusters
+RUN curl -LO https://dl.k8s.io/release/v1.21.2/bin/linux/amd64/kubectl && \
 chmod +x kubectl && mv kubectl /usr/local/bin/kubectl
+
+#Get oc 3.10
+RUN curl -OL https://github.com/openshift/origin/releases/download/v3.10.0/openshift-origin-client-tools-v3.10.0-dd10d17-linux-64bit.tar.gz && \
+tar -xzvf openshift-origin-client-tools-v3.10.0-dd10d17-linux-64bit.tar.gz && cp openshift-origin-client-tools-v3.10.0-dd10d17-linux-64bit/oc /usr/local/bin/oc310 && \
+chmod +x /usr/local/bin/oc310 && rm -rf openshift-origin-client-tools-v3.10.0-dd10d17-linux-64bit && rm -f openshift-origin-client-tools-v3.10.0-dd10d17-linux-64bit.tar.gz
+
+#Get oc 3.11
+RUN curl -OL https://github.com/openshift/origin/releases/download/v3.11.0/openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit.tar.gz && \
+tar -xzvf openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit.tar.gz && cp openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit/oc  /usr/local/bin && \
+chmod +x /usr/local/bin/oc && rm -f openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit.tar.gz && rm -rf openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit
 
 #Get docker we're not using the apk as it includes the server binaries that we don't need
 RUN curl -OL https://download.docker.com/linux/static/stable/x86_64/docker-18.09.6.tgz && tar -xzvf docker-18.09.6.tgz && \
