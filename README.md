@@ -1,12 +1,16 @@
-# Alpine Container Tools Docker Image
+Ubuntu Container Tools Docker Image
+--
+Forkend from Raesene alpine-containertools. I just changed it to ubuntu and
+added the OpenShift client tools.
 
 This is an image with a load of common container tooling, for use when you need various containers tools :) It's generally targeted at security assessment tools.
 
-# Tools installed
+Tools installed
+--
 
 ## General Tools
 
-- **openssh** 
+- **openssh**
 - **nmap**
 - **curl**
 
@@ -24,17 +28,18 @@ This is an image with a load of common container tooling, for use when you need 
 - **rakkess** - https://github.com/corneliusweig/rakkess - Tool for analyzing RBAC permissions
 - **kubectl-who-can** - https://github.com/aquasecurity/kubectl-who-can - Tool for analyzing RBAC permissions
 - **kube-hunter** - https://github.com/aquasecurity/kube-hunter - Tool for pentesting Kubernetes clusters
+- oc - OpenShift Client Tools
 
 There are also some sample Helm Charts and manifests in `/charts` and `/manifests` respectively, which may be useful on tests remember to test these before use!
 
+Running Instructions
+--
 
-## Running Instructions
+You can run this container with just a shell for interactive access with
 
-You can run this container with just a shell for interactive access with 
+`docker run -it macagr/ubuntu-containertools /bin/bash`
 
-`docker run -it raesene/alpine-containertools /bin/bash`
-
-Alternatively if you don't specify a command it'll launch an SSH server with a random password. To use this with a docker image first, `docker run -d -p 3456:22 raesene/alpine-containertools` then `docker ps` to get the container name, then `docker logs <container>` to get the root password, then `ssh root@<ip>` 
+Alternatively if you don't specify a command it'll launch an SSH server with a random password. To use this with a docker image first, `docker run -d -p 3456:22 macagr/ubuntu-containertools` then `docker ps` to get the container name, then `docker logs <container>` to get the root password, then `ssh root@<ip>`
 
 
 The SSH setup was based on ideas from https://github.com/fedora-cloud/Fedora-Dockerfiles/blob/master/ssh/entrypoint.sh and
